@@ -348,6 +348,8 @@ a:hover {
   overflow: hidden;
   border-radius: 10px;
   border: 1px solid var(--border-color);
+  background: #000;
+  line-height: 0;
 }
 
 .framework-gif-wrapper img,
