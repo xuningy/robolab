@@ -1,0 +1,4 @@
+difficulty,count,avg_episode_length
+simple,68,67.4
+moderate,37,104.6
+complex,15,181.3

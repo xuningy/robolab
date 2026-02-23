@@ -23,7 +23,6 @@ docs/doxygen/html/*
 docs/doxygen/xml/*
 
 # Data
-**/data/
 **/output/
 **/not_used/**
 **/old/**
