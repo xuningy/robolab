@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RoboLab: A High-Fidelity Simulation Benchmark for Analysis of Task Generalist Policies</title>
+
+  <meta name="keywords" content="RoboLab, robotics, simulation, benchmark, generalist policies, NVIDIA">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <!--
+    NVIDIA Sans: self-host font files in static/fonts/ and uncomment the @font-face
+    rules below, or link to your NVIDIA CDN stylesheet here.
+  -->
+  <style>
+    /* Example @font-face — update src paths to your actual .woff2/.woff files */
+    /*
+    @font-face {
+      font-family: 'NVIDIA Sans';
+      src: url('./static/fonts/NVIDIASans-Regular.woff2') format('woff2'),
+           url('./static/fonts/NVIDIASans-Regular.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'NVIDIA Sans';
+      src: url('./static/fonts/NVIDIASans-Medium.woff2') format('woff2'),
+           url('./static/fonts/NVIDIASans-Medium.woff') format('woff');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'NVIDIA Sans';
+      src: url('./static/fonts/NVIDIASans-Bold.woff2') format('woff2'),
+           url('./static/fonts/NVIDIASans-Bold.woff') format('woff');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    */
+  </style>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+
+<!-- Sticky Navigation -->
+<nav class="sticky-nav" id="sticky-nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-brand">RoboLab</a>
+    <div class="nav-links">
+      <a href="#tldr" class="nav-link" data-section="tldr">Overview</a>
+      <a href="#framework" class="nav-link" data-section="framework">Framework</a>
+      <a href="#benchmark" class="nav-link" data-section="benchmark">Benchmark</a>
+      <a href="#results" class="nav-link" data-section="results">Results</a>
+      <a href="#bibtex" class="nav-link" data-section="bibtex">BibTeX</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero is-fullheight-with-navbar hero-banner" id="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title publication-title">
+        <span class="accent">RoboLab:</span> A High-Fidelity Simulation<br>
+        Benchmark for Analysis of Task Generalist<br>
+        Policies
+      </h1>
+      <div class="publication-authors">
+        <span class="author-block"><a href="https://research.nvidia.com/person/xuning-yang" target="_blank">Xuning Yang</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="https://www.cs.toronto.edu/~rishit/" target="_blank">Rishit Dagli</a><sup>1,2</sup>,</span>
+        <span class="author-block"><a href="https://research.nvidia.com/person/alex-zook" target="_blank">Alex Zook</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="https://research.nvidia.com/person/hugo-hadfield" target="_blank">Hugo Hadfield</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="https://research.nvidia.com/person/ankit-goyal" target="_blank">Ankit Goyal</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="https://research.nvidia.com/person/stan-birchfield" target="_blank">Stan Birchfield</a><sup>1</sup>,</span>
+        <span class="author-block"><a href="https://research.nvidia.com/person/fabio-ramos" target="_blank">Fabio Ramos</a><sup>1,3</sup>,</span>
+        <span class="author-block"><a href="https://research.nvidia.com/person/jonathan-tremblay" target="_blank">Jonathan Tremblay</a><sup>1</sup></span>
+      </div>
+      <div class="author-affiliations">
+        <sup>1</sup>NVIDIA &nbsp;&nbsp; <sup>2</sup>University of Toronto &nbsp;&nbsp; <sup>3</sup>The University of Sydney
+      </div>
+
+      <div class="publication-links">
+        <a class="button is-rounded btn-primary" href="#">
+          <span class="icon"><i class="fas fa-file-pdf"></i></span>
+          <span>Paper (PDF)</span>
+        </a>
+        <a class="button is-rounded btn-secondary" href="#video-grid">
+          <span class="icon"><i class="fas fa-play"></i></span>
+          <span>Watch Videos</span>
+        </a>
+        <a class="button is-rounded btn-secondary" disabled>
+          <span class="icon"><i class="fas fa-code"></i></span>
+          <span>Code (Coming Soon!)</span>
+        </a>
+      </div>
+
+      <div class="hero-overview" id="tldr">
+        <p>
+          <strong>RoboLab is a robot- and policy-agnostic simulation benchmarking platform
+          for evaluating real-world task-generalist robot policies. </strong>
+          RoboLab is designed for policies trained on real-world data directly in simulation without co-training on simulation data in order to evaluate generalization.
+        </p>
+        <!-- <p>
+          We introduce the <strong>Robot Question and Answering (RQA) Benchmark</strong> which evaluates policies across three competency axes:
+          <em>Visual</em> (object recognition of color, semantics, and size),
+          <em>Relational</em> (understanding of inter-object temporal, numerical, and spatial relationships),
+          and <em>Procedural</em> (action-oriented reasoning including affordances, reorientation).
+        </p> -->
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Framework Section -->
+<section class="section figure-section" id="framework">
+  <div class="container">
+    <h2 class="title section-title has-text-centered">RoboLab Framework</h2>
+    <div class="section-divider"></div>
+    <p class="has-text-centered results-subtitle">
+      RoboLab allows users to directly <strong>generate scenes by physically arranging objects in simulation</strong>, and <strong>generate tasks by adding a language instruction</strong>, mirroring real-world evaluation setup.
+      Scenes and tasks can be hand-generated in <strong>minutes</strong>, or scaled using LLMs. Task libraries will pair with any robot and policy into ready-to-run environments, supporting multiple embodiments.
+    </p>
+    <div class="framework-grid">
+      <div class="framework-block">
+        <h3 class="framework-block-title"><span class="framework-step">1</span> Scene Generation</h3>
+        <div class="framework-gif-wrapper">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/scene_gen.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="framework-block-desc">Physically arrange objects in simulation to build diverse scene libraries, manually or at scale with LLMs.</p>
+      </div>
+      <div class="framework-arrow"><i class="fas fa-arrow-right"></i></div>
+      <div class="framework-block">
+        <h3 class="framework-block-title"><span class="framework-step">2</span> Task Generation</h3>
+        <div class="framework-gif-wrapper">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/task_gen.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="framework-block-desc">Create tasks by adding language instructions to scenes, manually or at scale with LLMs.</p>
+      </div>
+      <div class="framework-arrow"><i class="fas fa-arrow-right"></i></div>
+      <div class="framework-block">
+        <h3 class="framework-block-title"><span class="framework-step">3</span> Environment Generation</h3>
+        <div class="framework-gif-wrapper">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/env_gen.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="framework-block-desc">Specify the robot, policy, action/observation configs and scene variations. RoboLab automatically combines task libraries into ready-to-run environments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Video Grid Section -->
+<section class="section video-grid-section" id="video-grid">
+  <div class="container">
+    <h3 class="title subsection-title has-text-centered">Example Tasks</h3>
+    <div class="video-grid">
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Put_the_onion_in_the_wood_bowl_0_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Put the onion in the wood bowl</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Pack_canned_foods_into_the_bin_1_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Pack canned foods into the bin</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Put_all_the_green_fruit_on_the_plate_2_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Put all the green fruit on the plate</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Put_the_red_hammer_and_black_hammer_in_the_left_bin_9_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Put the red &amp; black hammer in the left bin</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Put_the_small_yogurt_in_the_red_bowl_0_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Put the small yogurt in the red bowl</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Put_the_white_mug_in_the_center_of_the_table_1_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Put the white mug in the center of the table</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Move_an_orange_to_the_white_bowl_1_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Move an orange to the white bowl</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Stack_the_blocks_in_the_order_from_bottom_to_top_red_blue_green_yellow_4_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Stack the blocks in the order from bottom to top: red, blue, green, yellow</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Unstack_the_rubiks_cube_tower_2_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">Unstack the Rubik's cube tower</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Scene Variations Section -->
+<section class="section scene-variations-section" id="scene-variations">
+  <div class="container">
+    <h3 class="title is-4 has-text-centered">Scene Variations</h3>
+    <p class="has-text-centered results-subtitle">
+      RoboLab supports controlled perturbations across lighting, camera pose, backgrounds, textures, and shadows to systematically test policy robustness.
+    </p>
+    <div class="scene-var-grid">
+      <div class="scene-var-cell">
+        <video autoplay loop muted playsinline>
+          <source src="./static/videos/lighting.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="scene-var-cell">
+        <video autoplay loop muted playsinline>
+          <source src="./static/videos/shadows.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="scene-var-cell">
+        <video autoplay loop muted playsinline>
+          <source src="./static/videos/backgrounds.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="scene-var-cell">
+        <video autoplay loop muted playsinline>
+          <source src="./static/videos/textures.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="scene-var-cell">
+        <video autoplay loop muted playsinline>
+          <source src="./static/videos/object_pose.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="scene-var-cell">
+        <video autoplay loop muted playsinline>
+          <source src="./static/videos/camera_views.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Benchmark Section -->
+<section class="section rqa-intro-section" id="benchmark">
+  <div class="container">
+    <h2 class="title section-title has-text-centered">Benchmark</h2>
+    <div class="section-divider"></div>
+    <p class="has-text-centered results-subtitle">
+      We introduce the <strong>Robot Question and Answering (RQA) Benchmark</strong> which evaluates policies across three competency axes spanning three difficulty levels.
+    </p>
+    <ul class="competency-axes-list">
+      <li><em>Visual</em> &mdash; object recognition of color, semantics, and size</li>
+      <li><em>Relational</em> &mdash; understanding of inter-object temporal, numerical, and spatial relationships</li>
+      <li><em>Procedural</em> &mdash; action-oriented reasoning including affordances, reorientation</li>
+    </ul>
+    <div class="stat-bubbles">
+      <span class="stat-bubble">Average subtasks per task: 1.95</span>
+      <span class="stat-bubble">Average objects per task: 9.1</span>
+      <span class="stat-bubble">Average difficulty score: 2.77</span>
+    </div>
+    <div class="benchmark-comp-grid">
+      <div class="pie-chart-block">
+        <h4 class="pie-chart-label">Category Breakdown</h4>
+        <canvas id="category-pie"></canvas>
+      </div>
+      <div class="pie-chart-block">
+        <h4 class="pie-chart-label">Distribution by Difficulty</h4>
+        <canvas id="difficulty-pie"></canvas>
+      </div>
+    </div>
+
+    <h3 class="title subsection-title has-text-centered">Comparison to DROID Dataset</h3>
+    <p class="has-text-centered results-subtitle">
+      Our benchmark emphasizes multi-step and two-step tasks compared to the DROID training distribution.
+      In addition, only 36.4% of benchmark objects appear in the top 90% of mentions in the DROID training vocabulary, highlighting the out-of-distribution challenge.
+    </p>
+    <div class="droid-comparison-grid">
+      <div class="pie-chart-block bar-chart-block">
+        <h4 class="pie-chart-label">Task Length Comparison</h4>
+        <canvas id="subtask-grouped-bar"></canvas>
+      </div>
+      <div class="venn-block">
+        <h4 class="pie-chart-label" style="text-align: center;">Object Vocabulary Overlap (top 90% mentions)</h4>
+        <div class="venn-container">
+          <svg class="venn-svg" viewBox="0 0 85 55" xmlns="http://www.w3.org/2000/svg">
+            <circle class="venn-circle venn-droid" cx="30" cy="27" r="17" />
+            <circle class="venn-circle venn-benchmark" cx="50" cy="27" r="14" />
+            <text class="venn-count" x="21" y="28" text-anchor="middle">234</text>
+            <text class="venn-label" x="41" y="24" text-anchor="middle">Both</text>
+            <text class="venn-count venn-count-both" x="41" y="30" text-anchor="middle">36</text>
+            <text class="venn-count" x="58" y="28" text-anchor="middle">63</text>
+            <text class="venn-header venn-header-droid" x="25" y="6" text-anchor="middle">DROID (270)</text>
+            <text class="venn-header venn-header-bench" x="55" y="6" text-anchor="middle">Benchmark (99)</text>
+            <text class="venn-stat" x="42" y="50" text-anchor="middle">Benchmark coverage: 36.4%  ·  DROID coverage: 13.3%</text>
+          </svg>
+          <div class="venn-tooltip" id="venn-tooltip"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Results Section -->
+<section class="section results-section" id="results">
+  <div class="container">
+    <h2 class="title section-title has-text-centered">Results</h2>
+    <div class="section-divider"></div>
+  </div>
+</section>
+
+<!-- Overall Results -->
+<section class="section results-section" id="overall-results">
+  <div class="container">
+    <h3 class="title subsection-title has-text-centered">Overall</h3>
+    <p class="has-text-centered results-subtitle">
+      Task success rates (%) of SOTA VLA policies. All policies use off-the-shelf checkpoints fine-tuned on the DROID dataset.
+    <div class="table-container">
+      <table class="table is-hoverable results-table" id="results-table">
+        <thead>
+          <tr>
+            <th class="category-header">Model</th>
+            <th data-col="1">Overall</th>
+            <th data-col="2">Simple</th>
+            <th data-col="3">Moderate</th>
+            <th data-col="4">Complex</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="category-label">&pi;<sub>0.5</sub></td>
+            <td data-col="1">31.9</td>
+            <td data-col="2">40.6</td>
+            <td data-col="3">28.2</td>
+            <td data-col="4">19.4</td>
+          </tr>
+          <tr>
+            <td class="category-label">&pi;<sub>0</sub>-FAST</td>
+            <td data-col="1">18.2</td>
+            <td data-col="2">26.0</td>
+            <td data-col="3">17.1</td>
+            <td data-col="4">3.1</td>
+          </tr>
+          <tr>
+            <td class="category-label">GR00T N1.6</td>
+            <td data-col="1">8.0</td>
+            <td data-col="2">12.3</td>
+            <td data-col="3">7.1</td>
+            <td data-col="4">0.0</td>
+          </tr>
+          <tr>
+            <td class="category-label">&pi;<sub>0</sub></td>
+            <td data-col="1">5.9</td>
+            <td data-col="2">11.7</td>
+            <td data-col="3">2.1</td>
+            <td data-col="4">0.0</td>
+          </tr>
+          <tr>
+            <td class="category-label">PaliGemma</td>
+            <td data-col="1">1.9</td>
+            <td data-col="2">1.1</td>
+            <td data-col="3">3.9</td>
+            <td data-col="4">0.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Competency-Axes Breakdown Section -->
+<section class="section rqa-section" id="rqa-breakdown">
+  <div class="container">
+    <h3 class="title subsection-title has-text-centered">Competency-Axes Breakdown</h3>
+
+    <div class="rqa-grid">
+
+      <!-- Relational Competency -->
+      <div class="rqa-card">
+        <div class="rqa-card-header">
+          <span class="rqa-icon"><i class="fas fa-project-diagram"></i></span>
+          <h3 class="rqa-card-title">Relational Competency</h3>
+        </div>
+        <p class="rqa-card-desc">Understanding of inter-object temporal, numerical, and spatial relationships.</p>
+        <table class="table rqa-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Conjunction</th>
+              <th>Counting</th>
+              <th>Spatial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="category-label">&pi;<sub>0.5</sub></td><td>76.0</td><td>72.0</td><td>23.9</td></tr>
+            <tr><td class="category-label">&pi;<sub>0</sub>-FAST</td><td>42.0</td><td>56.0</td><td>20.0</td></tr>
+            <tr><td class="category-label">GR00T N1.6</td><td>4.0</td><td>38.0</td><td>7.0</td></tr>
+            <tr><td class="category-label">&pi;<sub>0</sub></td><td>26.0</td><td>10.0</td><td>3.0</td></tr>
+            <tr><td class="category-label">PaliGemma</td><td>0.0</td><td>22.0</td><td>1.3</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Visual Competency -->
+      <div class="rqa-card">
+        <div class="rqa-card-header">
+          <span class="rqa-icon"><i class="fas fa-eye"></i></span>
+          <h3 class="rqa-card-title">Visual Competency</h3>
+        </div>
+        <p class="rqa-card-desc">Recognition of visual traits of objects, such as color, semantics, and size.</p>
+        <table class="table rqa-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Color</th>
+              <th>Semantics</th>
+              <th>Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="category-label">&pi;<sub>0.5</sub></td><td>30.0</td><td>21.5</td><td>35.0</td></tr>
+            <tr><td class="category-label">&pi;<sub>0</sub>-FAST</td><td>8.3</td><td>12.1</td><td>35.0</td></tr>
+            <tr><td class="category-label">GR00T N1.6</td><td>5.6</td><td>5.9</td><td>0.0</td></tr>
+            <tr><td class="category-label">&pi;<sub>0</sub></td><td>1.7</td><td>1.8</td><td>0.0</td></tr>
+            <tr><td class="category-label">PaliGemma</td><td>0.0</td><td>2.1</td><td>5.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Procedural Competency -->
+      <div class="rqa-card">
+        <div class="rqa-card-header">
+          <span class="rqa-icon"><i class="fas fa-cogs"></i></span>
+          <h3 class="rqa-card-title">Procedural Competency</h3>
+        </div>
+        <p class="rqa-card-desc">Action-oriented reasoning including affordances, reorientation, and stacking objects.</p>
+        <table class="table rqa-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Affordance</th>
+              <th>Reorientation</th>
+              <th>Stacking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="category-label">&pi;<sub>0.5</sub></td><td>20.0</td><td>53.3</td><td>16.0</td></tr>
+            <tr><td class="category-label">&pi;<sub>0</sub>-FAST</td><td>0.0</td><td>20.0</td><td>0.0</td></tr>
+            <tr><td class="category-label">GR00T N1.6</td><td>0.0</td><td>0.0</td><td>0.0</td></tr>
+            <tr><td class="category-label">&pi;<sub>0</sub></td><td>0.0</td><td>0.0</td><td>0.0</td></tr>
+            <tr><td class="category-label">PaliGemma</td><td>0.0</td><td>0.0</td><td>0.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Vague Language Results Section -->
+<section class="section vague-language-section" id="vague-language">
+  <div class="container">
+    <h3 class="title subsection-title has-text-centered">Language Specificity</h3>
+    <p class="has-text-centered results-subtitle">
+      Language instructions become more vague, policies struggle. Same scene, same goal&mdash;only the language changes
+    </p>
+    <div class="vague-lang-grid">
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Take_all_the_bananas_out_of_the_grey_bin_and_put_it_on_the_table_3_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">&ldquo;Take all the bananas out of the bin&rdquo; (8.9s)</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Take_the_bananas_out_1_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">&ldquo;Take the bananas out&rdquo; (20.1s)</p>
+      </div>
+
+      <div class="video-cell">
+        <div class="video-placeholder">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/Empty_the_grey_bin_1_viewport_3X.mp4" type="video/mp4">
+          </video>
+
+        </div>
+        <p class="video-caption">&ldquo;Empty the grey bin&rdquo; DNF</p>
+      </div>
+
+    </div>
+
+    <div class="vague-tables-grid">
+
+      <div class="vague-table-block">
+        <h4 class="vague-table-title">Bananas Out Of Bin Task</h4>
+        <table class="table rqa-table">
+          <thead>
+            <tr>
+              <th>Instruction</th>
+              <th>&pi;<sub>0.5</sub></th>
+              <th>&pi;<sub>0</sub>-FAST</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="category-label">&ldquo;Take all the bananas out of the grey bin and put it on the table&rdquo;</td>
+              <td>50</td>
+              <td>30</td>
+            </tr>
+            <tr>
+              <td class="category-label">&ldquo;Take the bananas out&rdquo;</td>
+              <td>40</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td class="category-label">&ldquo;Empty the grey bin&rdquo;</td>
+              <td>10</td>
+              <td>70</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="vague-table-block">
+        <h4 class="vague-table-title">White Mugs In Bin Task</h4>
+        <table class="table rqa-table">
+          <thead>
+            <tr>
+              <th>Instruction</th>
+              <th>&pi;<sub>0.5</sub></th>
+              <th>&pi;<sub>0</sub>-FAST</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="category-label">&ldquo;Put the white mugs in the grey bin&rdquo;</td>
+              <td>80</td>
+              <td>20</td>
+            </tr>
+            <tr>
+              <td class="category-label">&ldquo;Put the mugs in the bin&rdquo;</td>
+              <td>90</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td class="category-label">&ldquo;Put away mugs&rdquo;</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- Example Episode Rollouts Section -->
+<section class="section rollouts-section" id="rollouts">
+  <div class="container">
+    <h3 class="title subsection-title has-text-centered">Example Episode Rollouts</h3>
+    <p class="has-text-centered results-subtitle">
+      Full episode rollouts of &pi;<sub>0.5</sub> executing tasks in RoboLab, showing both successes and errors encountered during execution.
+    </p>
+    <div class="rollouts-grid">
+
+      <div class="video-cell rollout-cell">
+        <div class="rollout-video-wrapper">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/captioned/Put_all_plastic_bottles_away_in_the_bin.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="video-caption">Put all plastic bottles away in the bin</p>
+      </div>
+
+      <div class="video-cell rollout-cell">
+        <div class="rollout-video-wrapper">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/captioned/Make_sure_all_the_white_mugs_are_upright_so_that_the_opening_is_facing_upwards.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="video-caption">Make sure all the white mugs are upright so that the opening is facing upwards</p>
+      </div>
+
+      <div class="video-cell rollout-cell">
+        <div class="rollout-video-wrapper">
+          <video autoplay loop muted playsinline>
+            <source src="./static/videos/captioned/Put_the_orange_measuring_cup_and_the_blue_measuring_cup_outside_of_the_plate.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="video-caption">Put the orange measuring cup and the blue measuring cup outside of the plate</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Failure Gallery Section -->
+<section class="section failure-section" id="failure-gallery">
+  <div class="container">
+    <h3 class="title subsection-title has-text-centered">Failure Analysis: Wrong Object Grasps</h3>
+    <p class="has-text-centered results-subtitle">
+      VLAs frequently grasp visually similar or geometrically biased objects instead of the language-specified target.
+      Numbers in parentheses indicate total wrong-grasp occurrences across 10 episodes.
+    </p>
+
+    <div class="failure-grid">
+
+      <div class="failure-card">
+        <div class="failure-header failure-header--zero">0% success</div>
+        <div class="failure-body">
+          <p class="failure-instruction">&ldquo;Put the limes on the plate&rdquo;</p>
+          <div class="failure-detail">
+            <div class="failure-row">
+              <span class="failure-label">Expected:</span>
+              <span class="failure-value">limes</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">&pi;<sub>0.5</sub> grabbed:</span>
+              <span class="failure-value failure-wrong">lemon (15&times;), red onion (3&times;), pomegranate (1&times;)</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">&pi;<sub>0</sub> grabbed:</span>
+              <span class="failure-value failure-wrong">pomegranate (11&times;), red onion (2&times;), orange (1&times;)</span>
+            </div>
+          </div>
+          <p class="failure-insight">Policies confuse visually similar green/round fruit.</p>
+        </div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-header failure-header--zero">0% success (all models)</div>
+        <div class="failure-body">
+          <p class="failure-instruction">&ldquo;Pack boxed foods into the bin&rdquo; (3 boxes/cans)</p>
+          <div class="failure-detail">
+            <div class="failure-row">
+              <span class="failure-label">Expected:</span>
+              <span class="failure-value">sugar box, pudding box</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">&pi;<sub>0.5</sub> grabbed:</span>
+              <span class="failure-value failure-wrong">spam can (4&times;), soup can (1&times;)</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">GR00T grabbed:</span>
+              <span class="failure-value failure-wrong">spam can (8&times;), soup can (3&times;)</span>
+            </div>
+          </div>
+          <p class="failure-insight">Geometric shape bias: cylindrical objects (cans) override language-specified rectangular targets (boxes).</p>
+        </div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-header failure-header--zero">0% success</div>
+        <div class="failure-body">
+          <p class="failure-instruction">&ldquo;Move an orange to the white bowl&rdquo;</p>
+          <div class="failure-detail">
+            <div class="failure-row">
+              <span class="failure-label">Expected:</span>
+              <span class="failure-value">orange</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">&pi;<sub>0.5</sub> grabbed:</span>
+              <span class="failure-value failure-wrong">pumpkin (21&times;), pumpkin small (4&times;)</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">&pi;<sub>0</sub> grabbed:</span>
+              <span class="failure-value failure-wrong">pumpkin (3&times;), wooden bowl (1&times;)</span>
+            </div>
+          </div>
+          <p class="failure-insight">Pumpkin's similar color and round shape dominates over correct orange identification.</p>
+        </div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-header failure-header--low">0&ndash;10% success</div>
+        <div class="failure-body">
+          <p class="failure-instruction">&ldquo;Take the measuring spoons out&rdquo;</p>
+          <div class="failure-detail">
+            <div class="failure-row">
+              <span class="failure-label">Expected:</span>
+              <span class="failure-value">measuring spoons</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">&pi;<sub>0.5</sub> grabbed:</span>
+              <span class="failure-value failure-wrong">bowl (54&times;), measuring cup (47&times;), drill (1&times;)</span>
+            </div>
+            <div class="failure-row">
+              <span class="failure-label">GR00T grabbed:</span>
+              <span class="failure-value failure-wrong">bowl (9&times;), measuring cup (8&times;), drill (7&times;)</span>
+            </div>
+          </div>
+          <p class="failure-insight">Semantic confusion between &ldquo;measuring spoons&rdquo; and &ldquo;measuring cups&rdquo;; bowl proximity dominates.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Leaderboard Section -->
+<section class="section leaderboard-section" id="leaderboard">
+  <div class="container">
+    <h2 class="title section-title has-text-centered">Leaderboard</h2>
+    <div class="section-divider"></div>
+    <div class="leaderboard-banner">
+      <p class="leaderboard-coming-soon">Coming Soon</p>
+      <p class="leaderboard-description">
+        The RoboLab leaderboard and results submission portal are under active development.
+        We will support submitting policy checkpoints and client code for open-source sharing,
+        as well as submission of result files for community validation and reproducibility.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- BibTeX Section -->
+<section class="section bibtex-section" id="bibtex">
+  <div class="container is-max-desktop">
+    <h2 class="title section-title has-text-centered">BibTeX</h2>
+    <div class="section-divider"></div>
+    <pre class="bibtex-block"><code>@article{yang2025robolab,
+  title     = {RoboLab: A High-Fidelity Simulation Benchmark for Analysis of Task Generalist Policies},
+  author    = {Yang, Xuning and Dagli, Rishit and Zook, Alex and Hadfield, Hugo and Goyal, Ankit and Birchfield, Stan and Ramos, Fabio and Tremblay, Jonathan},
+  journal   = {arXiv preprint arXiv:XXXX.XXXXX},
+  year      = {2025},
+}</code></pre>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer site-footer">
+  <div class="container">
+    <div class="content has-text-centered">
+
+    </div>
+  </div>
+</footer>
+
+<script src="./static/js/index.js"></script>
+</body>
+</html>
