@@ -1,11 +1,11 @@
 category,subcategory,count
-visual,color,23
-visual,semantics,51
+visual,color,26
+visual,semantics,58
 visual,size,6
 relational,conjunction,8
-relational,counting,6
+relational,counting,7
 relational,spatial,27
-procedural,affordance,11
+procedural,affordance,12
 procedural,reorientation,6
-procedural,sorting,8
+procedural,sorting,11
 procedural,stacking,6

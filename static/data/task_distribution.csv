@@ -1,7 +1,7 @@
 name,category,percentage
-single-step,benchmark,45.8%
+single-step,benchmark,44.1%
 single-step,droid,58.1%
-two-step,benchmark,34.2%
+two-step,benchmark,33.9%
 two-step,droid,34.8%
-multi-step,benchmark,20.0%
+multi-step,benchmark,22.0%
 multi-step,droid,7.1%

@@ -592,9 +592,9 @@ a:hover {
   font-style: italic;
 }
 
-/* ===== RQA Benchmark Intro ===== */
+/* ===== Benchmark Benchmark Intro ===== */
 
-.rqa-intro-section {
+.benchmark-intro-section {
   background: var(--bg-secondary);
   padding-bottom: 2rem;
 }
@@ -918,13 +918,13 @@ a:hover {
   font-weight: 700;
 }
 
-/* ===== RQA Breakdown Section ===== */
+/* ===== Benchmark Breakdown Section ===== */
 
-.rqa-section {
+.benchmark-section {
   background: var(--bg-secondary);
 }
 
-.rqa-grid {
+.benchmark-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
@@ -932,7 +932,7 @@ a:hover {
   margin: 0 auto;
 }
 
-.rqa-card {
+.benchmark-card {
   background: #fff;
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -940,19 +940,19 @@ a:hover {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.rqa-card:hover {
+.benchmark-card:hover {
   border-color: var(--accent);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-.rqa-card-header {
+.benchmark-card-header {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 }
 
-.rqa-icon {
+.benchmark-icon {
   width: 32px;
   height: 32px;
   display: flex;
@@ -965,7 +965,7 @@ a:hover {
   flex-shrink: 0;
 }
 
-.rqa-card-title {
+.benchmark-card-title {
   font-family: 'NVIDIA Sans', 'Noto Sans', sans-serif;
   font-weight: 700;
   font-size: 1.05rem;
@@ -973,14 +973,14 @@ a:hover {
   margin: 0;
 }
 
-.rqa-card-desc {
+.benchmark-card-desc {
   font-size: 0.85rem;
   color: var(--text-muted);
   margin-bottom: 1rem;
   line-height: 1.5;
 }
 
-.rqa-table {
+.benchmark-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -988,7 +988,7 @@ a:hover {
   background: transparent !important;
 }
 
-.rqa-table thead th {
+.benchmark-table thead th {
   background: var(--bg-card) !important;
   color: var(--text-primary) !important;
   font-weight: 600;
@@ -999,11 +999,11 @@ a:hover {
   font-size: 0.8rem;
 }
 
-.rqa-table thead th:first-child {
+.benchmark-table thead th:first-child {
   text-align: left;
 }
 
-.rqa-table tbody td {
+.benchmark-table tbody td {
   padding: 0.45rem 0.6rem !important;
   text-align: center;
   color: var(--text-secondary) !important;
@@ -1012,18 +1012,18 @@ a:hover {
   font-size: 0.85rem;
 }
 
-.rqa-table tbody td.category-label {
+.benchmark-table tbody td.category-label {
   text-align: left;
   font-weight: 600;
   color: var(--text-primary) !important;
   white-space: nowrap;
 }
 
-.rqa-table tbody tr:last-child td {
+.benchmark-table tbody tr:last-child td {
   border-bottom: none !important;
 }
 
-.rqa-table tbody tr:hover td {
+.benchmark-table tbody tr:hover td {
   background: var(--bg-card) !important;
 }
 
@@ -1153,6 +1153,23 @@ a:hover {
   font-style: italic;
 }
 
+/* ===== Sensitivity Analysis Section ===== */
+
+.sensitivity-section {
+  background: var(--bg-primary);
+}
+
+.sensitivity-figure {
+  margin: 2rem auto 0;
+  max-width: 1000px;
+  text-align: center;
+}
+
+.sensitivity-figure img {
+  width: 100%;
+  height: auto;
+}
+
 /* ===== BibTeX Section ===== */
 
 .bibtex-section {
@@ -1257,7 +1274,7 @@ a:hover {
     font-size: 1.2rem;
   }
 
-  .rqa-grid {
+  .benchmark-grid {
     grid-template-columns: 1fr;
   }
 

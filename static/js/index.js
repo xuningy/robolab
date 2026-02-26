@@ -33,31 +33,35 @@ function initTableHighlighting() {
   });
 }
 
-/* ===== Auto-bold highest value per row ===== */
+/* ===== Auto-bold highest value per column ===== */
 
 function boldBestValues() {
-  var tables = document.querySelectorAll('.results-table, .rqa-table');
+  var tables = document.querySelectorAll('.results-table, .benchmark-table');
 
   tables.forEach(function (table) {
     var rows = table.querySelectorAll('tbody tr');
+    if (rows.length === 0) return;
 
-    rows.forEach(function (row) {
-      var dataCells = row.querySelectorAll('td:not(.category-label)');
+    var numCols = rows[0].querySelectorAll('td:not(.category-label)').length;
+
+    for (var col = 0; col < numCols; col++) {
       var best = -Infinity;
       var bestCell = null;
 
-      dataCells.forEach(function (td) {
-        var val = parseFloat(td.textContent);
+      rows.forEach(function (row) {
+        var cells = row.querySelectorAll('td:not(.category-label)');
+        if (col >= cells.length) return;
+        var val = parseFloat(cells[col].textContent);
         if (!isNaN(val) && val > best) {
           best = val;
-          bestCell = td;
+          bestCell = cells[col];
         }
       });
 
       if (bestCell && best > 0) {
         bestCell.classList.add('best-value');
       }
-    });
+    }
   });
 }
 
@@ -246,7 +250,7 @@ function initSubtaskGroupedBar() {
               borderSkipped: false
             },
             {
-              label: 'RQA Benchmark',
+              label: 'Benchmark',
               data: categories.map(function (c) { return datasets['benchmark'] ? datasets['benchmark'][c] || 0 : 0; }),
               backgroundColor: 'rgba(118, 185, 0, 0.4)',
               hoverBackgroundColor: 'rgba(118, 185, 0, 0.6)',
@@ -327,16 +331,16 @@ function initSubtaskGroupedBar() {
 function initVennDiagram() {
   var vennData = {
     droid: {
-      title: 'DROID only (234 words)',
-      items: 'table, counter, towel, lid, drawer, toy, cloth, cabinet, pen, tray, sink, door, button, paper, plush, bag, stove, shelf, glass, basket, countertop, jar, packet, holder, chair, faucet, kitchen, microwave, machine, ring ...'
+      title: 'DROID only (2,692 words)',
+      items: 'table (19,524), counter (6,134), towel (6,132), lid (5,839), drawer (4,448), toy (4,221), cloth (4,029), cabinet (3,806), pen (3,252), tray (2,846), sink (2,756), door (2,555), button (2,513), paper (2,506), plush (2,309), bag (2,296), stove (2,091), shelf (2,079), glass (2,074), basket (2,021), countertop (1,894), jar (1,697), packet (1,499), holder (1,446), chair (1,395), faucet (1,318), kitchen (1,201), microwave (1,185), machine (1,090), ring (1,040) ... +2,662 more'
     },
     both: {
-      title: 'Both (36 words) — 36.4% of benchmark',
-      items: 'cup, bowl, marker, box, mug, bottle, pot, block, plate, container, spoon, rack, coffee, bin, cube, storage, cups, remote, fork, spatula, control, keyboard, crate, banana, ladle, lime, sauce, apple, chocolate, glasses ...'
+      title: 'Both (68 words) — 68.7% of benchmark',
+      items: 'cup (13,503), bowl (11,675), marker (6,536), box (6,408), mug (5,832), bottle (4,867), pot (4,865), block (4,350), plate (3,815), container (3,316), spoon (2,869), rack (2,155), coffee (2,145), bin (1,334), cube (1,129), storage (1,056), cups (1,038), remote (805), fork (710), spatula (510), control (463), keyboard (425), crate (370), banana (317), ladle (223), lime (214), sauce (181), apple (174), chocolate (168), glasses (168) ... +38 more'
     },
     benchmark: {
-      title: 'Benchmark only (63 words)',
-      items: 'alphabet, anza, avocado, bagel, bars, bbq, birdhouse, blackandbrassbowl, butter, canned, carton, cheez, clay, computer, cookies, cordless, crabbypenholder, cubebox, dressing, drill, figurine, frozen, granola, hammer, husky, juice, ketchup, lime01, lizard, masher ...'
+      title: 'Benchmark only (31 words)',
+      items: 'anza, bagel, bbq, birdhouse, blackandbrassbowl, cheez, crabbypenholder, cubebox, frozen, husky, lime01, lizard, mayonnaise, milkjug, oatmeal, plasticjerrican, plasticpail, pomegranate, pudding, pumpkinlarge, pumpkinsmall, raisin, ranch, redonion, screwtoppail, smartphone, squarepail, tuna, utilityjug, whitepackerbottle ... +1 more'
     }
   };
 
@@ -369,15 +373,13 @@ function initVennDiagram() {
   }
 
   droidCircle.addEventListener('mouseenter', function (e) {
-    var svgRect = droidCircle.closest('svg').getBoundingClientRect();
-    var cx = svgRect.left + (325 / 520) * svgRect.width;
     droidCircle._lastZone = null;
     showTooltip(e, 'droid');
   });
 
   droidCircle.addEventListener('mousemove', function (e) {
     var svgRect = droidCircle.closest('svg').getBoundingClientRect();
-    var overlapX = svgRect.left + (225 / 520) * svgRect.width;
+    var overlapX = svgRect.left + (41 / 85) * svgRect.width;
     var zone = e.clientX > overlapX ? 'both' : 'droid';
     if (zone !== droidCircle._lastZone) {
       droidCircle._lastZone = zone;
@@ -395,7 +397,7 @@ function initVennDiagram() {
 
   benchCircle.addEventListener('mousemove', function (e) {
     var svgRect = benchCircle.closest('svg').getBoundingClientRect();
-    var overlapX = svgRect.left + (305 / 520) * svgRect.width;
+    var overlapX = svgRect.left + (52 / 85) * svgRect.width;
     var zone = e.clientX < overlapX ? 'both' : 'benchmark';
     if (zone !== benchCircle._lastZone) {
       benchCircle._lastZone = zone;
